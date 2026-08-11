@@ -1,139 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>LGT Device Information</title>
-
-<style>
-
-body{
-    margin:0;
-    padding:20px;
-    background:#0f172a;
-    color:white;
-    font-family:'Segoe UI',sans-serif;
-}
-
-.container{
-    max-width:900px;
-    margin:auto;
-}
-
-.header{
-    background:#1e293b;
-    border-radius:12px;
-    padding:25px;
-    margin-bottom:20px;
-}
-
-.header h1{
-    margin:0;
-    color:#4ade80;
-}
-
-.subtitle{
-    margin-top:8px;
-    color:#94a3b8;
-}
-
-.card{
-    background:#1e293b;
-    border-radius:12px;
-    padding:20px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-td{
-    padding:12px;
-    border-bottom:1px solid #334155;
-}
-
-.label{
-    width:35%;
-    color:#94a3b8;
-    font-weight:600;
-}
-
-.value{
-    font-weight:500;
-}
-
-.error{
-    color:#ef4444;
-    font-weight:bold;
-}
-
-.footer{
-    margin-top:20px;
-    text-align:center;
-    color:#64748b;
-    font-size:12px;
-}
-
-</style>
-
-</head>
-<body>
-
-<div class="container">
-
-    <div class="header">
-        <h1 id="ComputerName">Device Information</h1>
-        <div class="subtitle">
-            Lewisham & Greenwich NHS Trust
-        </div>
-    </div>
-
-    <div class="card">
-
-        <div id="error" class="error"></div>
-
-        <table id="deviceTable"></table>
-
-    </div>
-
-    <div class="footer">
-        Generated from desktop QR code
-    </div>
-
-</div>
-
 <script>
 
-const FriendlyNames = {
-    ComputerName : "Computer Name",
-    Manufacturer : "Manufacturer",
-    Model : "Model",
-    SerialNumber : "Serial Number",
-    OS : "Operating System",
-    Build : "OS Build",
-    Version : "OS Version",
-    MemoryGB : "Memory (GB)",
-    DiskTotalGB : "Disk Size (GB)",
-    DiskFreeGB : "Free Space (GB)",
-    Generated : "Generated"
-};
-
-function addRow(label,value)
-{
-    const table = document.getElementById("deviceTable");
-
-    const row = document.createElement("tr");
-
-    row.innerHTML =
-        `<td class="label">${label}</td>
-         <td class="value">${value}</td>`;
-
-    table.appendChild(row);
-}
+const table = document.getElementById("deviceTable");
+const errorDiv = document.getElementById("error");
 
 try
 {
-    const params = 
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get("d");
+
+    if(!encoded)
+    {
+        errorDiv.innerHTML = "No device information supplied.";
+    }
+    else
+    {
+        const jsonText = atob(encoded);
+
+        console.log("Decoded JSON:");
+        console.log(jsonText);
+
+        const device = JSON.parse(jsonText);
+
+        if(device.ComputerName)
+        {
+            document.getElementById("ComputerName").innerText =
+                device.ComputerName;
+        }
+
+        Object.entries(device).forEach(([key,value]) =>
+        {
+            const row = document.createElement("tr");
+
+            row.innerHTML =
+                `<td class="label">${key}</td>
+                 <td class="value">${value}</td>`;
+
+            table.appendChild(row);
+        });
+    }
+}
+catch(ex)
+{
+    errorDiv.innerHTML =
+        "ERROR: " + ex.message;
+
+    console.error(ex);
+}
+
+</script>
