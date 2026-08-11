@@ -1,50 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Information</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="font-family:Segoe UI;padding:20px;">
+
+<h1>Device Information</h1>
+
+<pre id="output"></pre>
+
 <script>
 
-const table = document.getElementById("deviceTable");
-const errorDiv = document.getElementById("error");
+const params = new URLSearchParams(window.location.search);
+const encoded = params.get('d');
 
-try
+if(encoded)
 {
-    const params = new URLSearchParams(window.location.search);
-    const encoded = params.get("d");
-
-    if(!encoded)
-    {
-        errorDiv.innerHTML = "No device information supplied.";
-    }
-    else
+    try
     {
         const jsonText = atob(encoded);
 
-        console.log("Decoded JSON:");
-        console.log(jsonText);
-
         const device = JSON.parse(jsonText);
 
-        if(device.ComputerName)
-        {
-            document.getElementById("ComputerName").innerText =
-                device.ComputerName;
-        }
+        let output = "";
 
         Object.entries(device).forEach(([key,value]) =>
         {
-            const row = document.createElement("tr");
-
-            row.innerHTML =
-                `<td class="label">${key}</td>
-                 <td class="value">${value}</td>`;
-
-            table.appendChild(row);
+            output += key.padEnd(20) + ": " + value + "\n";
         });
+
+        document.getElementById("output").textContent = output;
+    }
+    catch(ex)
+    {
+        document.getElementById("output").textContent =
+            "ERROR: " + ex.message;
     }
 }
-catch(ex)
+else
 {
-    errorDiv.innerHTML =
-        "ERROR: " + ex.message;
-
-    console.error(ex);
+    document.getElementById("output").textContent =
+        "No device information supplied.";
 }
 
 </script>
+
+</body>
+</html>
