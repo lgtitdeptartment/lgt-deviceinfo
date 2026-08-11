@@ -1,109 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Device Information</title>
-
-<style>
-
-body{
-    background:#111827;
-    color:white;
-    font-family:Segoe UI, Arial, sans-serif;
-    padding:20px;
-}
-
-.container{
-    max-width:900px;
-    margin:auto;
-}
-
-.card{
-    background:#1f2937;
-    border-radius:10px;
-    padding:20px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-td{
-    padding:12px;
-    border-bottom:1px solid #374151;
-}
-
-.label{
-    color:#9ca3af;
-    width:35%;
-}
-
-h1{
-    color:#4ade80;
-}
-
-.error{
-    color:#ef4444;
-    font-weight:bold;
-}
-
-</style>
-</head>
-
+<html>
 <body>
 
-<div class="container">
+<h1>Device Information Test</h1>
 
-<div class="card">
-
-<h1 id="title">Device Information</h1>
-
-<div id="error" class="error"></div>
-
-<table id="deviceTable"></table>
-
-</div>
-
-</div>
+<pre id="output"></pre>
 
 <script>
 
 const params = new URLSearchParams(window.location.search);
-const encoded = params.get("d");
+const encoded = params.get('d');
 
-if(!encoded)
-{
-    document.getElementById("error").innerText =
-        "No device information supplied.";
-}
-else
-{
-    try
-    {
-        const jsonText = atob(encoded);
+document.getElementById('output').innerText =
+    atob(encoded);
 
-        console.log(jsonText);
+</script>
 
-        const data = JSON.parse(jsonText);
-
-        if(data.ComputerName)
-        {
-            document.getElementById("title").innerText =
-                data.ComputerName;
-        }
-
-        const table = document.getElementById("deviceTable");
-
-        Object.entries(data).forEach(([key,value]) =>
-        {
-            const row = document.createElement("tr");
-
-            row.innerHTML =
-                `<td class="label">${key}</td><td>${value}</td>`;
-
-            table.appendChild(row);
-        });
-    
+</body>
+</html>
