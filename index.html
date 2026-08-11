@@ -1,77 +1,182 @@
 <!DOCTYPE html>
-<html>
-<div style="text-align:center;">
-<img src="logo.png"
-alt="Lewisham and Greenwich NHS Trust"
-style="max-width:450px;width:100%;margin-bottom:20px;">
-</div>
+<html lang="en">
 <head>
-    <title>Device Information</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>LGT Device Information</title>
+
+<style>
+
+body{
+    font-family: Segoe UI, Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 20px;
+    color: #333;
+}
+
+.container{
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.1);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.logo img{
+    max-width:400px;
+    width:100%;
+    height:auto;
+}
+
+h1{
+    color:#005EB8;
+    text-align:center;
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+.label{
+    font-weight:bold;
+    width:40%;
+    background:#f8f8f8;
+}
+
+.support{
+    margin-top:30px;
+    padding:15px;
+    background:#f0f7ff;
+    border-left:5px solid #005EB8;
+}
+
+.support h2{
+    margin-top:0;
+    color:#005EB8;
+}
+
+.footer{
+    margin-top:20px;
+    font-size:12px;
+    color:#666;
+    text-align:center;
+}
+
+</style>
 </head>
-<body style="font-family:Segoe UI;padding:20px;">
+<body>
 
-<h1>Device Information</h1>
+<div class="container">
 
-<pre id="output"></pre>
+    <div class="logo">
+        logo.png
+    </div>
+
+    <h1 id="title">Device Information</h1>
+
+    <table id="deviceTable"></table>
+
+    <div class="support">
+        <h2>Need IT Support?</h2>
+
+        <p>
+            If you require assistance with this device, please log a ticket via Halo ITSM.
+        </p>
+
+        <p>
+            IT Service Desk<br>
+            Phone: XXXXX XXXXXXX
+        </p>
+
+        <p>
+            Halo Portal:<br>
+            <a href="https://YOUR-HALO-URL"       Open Halo Service Portal
+            </a>
+        </p>
+    </div>
+
+    <div class="footer">
+        Device information generated from workstation QR code.
+    </div>
+
+</div>
 
 <script>
 
 const params = new URLSearchParams(window.location.search);
 const encoded = params.get('d');
 
+const FriendlyNames = {
+    ComputerName : "Computer Name",
+    Manufacturer : "Manufacturer",
+    Model : "Model",
+    SerialNumber : "Serial Number",
+    OS : "Operating System",
+    Build : "OS Build",
+    Version : "OS Version",
+    MemoryGB : "Installed Memory (GB)",
+    DiskTotalGB : "Disk Capacity (GB)",
+    DiskFreeGB : "Disk Free Space (GB)",
+    Generated : "Information Generated"
+};
+
 if(encoded)
 {
     try
     {
         const jsonText = atob(encoded);
-
         const device = JSON.parse(jsonText);
 
-        let output = "";
+        if(device.ComputerName)
+        {
+            document.getElementById("title").innerText =
+                device.ComputerName;
+        }
+
+        const table = document.getElementById("deviceTable");
 
         Object.entries(device).forEach(([key,value]) =>
         {
-            output += key.padEnd(20) + ": " + value + "\n";
-        });
+            const row = document.createElement("tr");
 
-        document.getElementById("output").textContent = output;
+            row.innerHTML =
+                "<td class='label'>" +
+                (FriendlyNames[key] || key) +
+                "</td>" +
+                "<td>" +
+                value +
+                "</td>";
+
+            table.appendChild(row);
+        });
     }
     catch(ex)
     {
-        document.getElementById("output").textContent =
-            "ERROR: " + ex.message;
+        document.getElementById("deviceTable").innerHTML =
+            "<tr><td>Error decoding device information.</td></tr>";
     }
 }
 else
 {
-    document.getElementById("output").textContent =
-        "No device information supplied.";
+    document.getElementById("deviceTable").innerHTML =
+        "<tr><td>No device information supplied.</td></tr>";
 }
 
 </script>
-<hr>
 
-<h2>Need IT Support?</h2>
-
-<p>
-Log a support request via Halo ITSM.
-</p>
-
-<p>
-Service Desk: 020 XXXX XXXX
-</p>
-
-<p>
-Email: servicedesk@nhs.net
-</p>
-
-<p>
-Halo Portal:
-<a href="YOUR
-Open Halo Service Portal
-</a>
-</p>
 </body>
 </html>
