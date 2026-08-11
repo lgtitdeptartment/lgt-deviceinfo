@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html>
-<body>
+<head>
+    <title>Device Information</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="font-family:Segoe UI;padding:20px;">
 
-<h1>Device Information Test</h1>
+<h1>Device Information</h1>
 
 <pre id="output"></pre>
 
@@ -11,8 +16,34 @@
 const params = new URLSearchParams(window.location.search);
 const encoded = params.get('d');
 
-document.getElementById('output').innerText =
-    atob(encoded);
+if(encoded)
+{
+    try
+    {
+        const jsonText = atob(encoded);
+
+        const device = JSON.parse(jsonText);
+
+        let output = "";
+
+        Object.entries(device).forEach(([key,value]) =>
+        {
+            output += key.padEnd(20) + ": " + value + "\n";
+        });
+
+        document.getElementById("output").textContent = output;
+    }
+    catch(ex)
+    {
+        document.getElementById("output").textContent =
+            "ERROR: " + ex.message;
+    }
+}
+else
+{
+    document.getElementById("output").textContent =
+        "No device information supplied.";
+}
 
 </script>
 
