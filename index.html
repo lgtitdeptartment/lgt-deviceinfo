@@ -126,7 +126,7 @@ const FriendlyNames = {
     OS : "Operating System",
     Build : "OS Build",
     Version : "OS Version",
-    MemoryGB : "Installed Memory (GB)",
+    MemoryGB : "Memory (GB)",
     DiskTotalGB : "Disk Capacity (GB)",
     DiskFreeGB : "Disk Free Space (GB)",
     Generated : "Information Generated"
@@ -141,19 +141,34 @@ if(encoded)
 
         const table = document.getElementById("deviceTable");
 
-        Object.entries(device).forEach(([key,value]) =>
+        const DisplayOrder = [
+            "ComputerName",
+            "Manufacturer",
+            "Model",
+            "SerialNumber",
+            "OS",
+            "MemoryGB",
+            "DiskTotalGB",
+            "DiskFreeGB"
+        ];
+
+        DisplayOrder.forEach((key) =>
         {
-            const row = document.createElement("tr");
+            if (device[key] !== undefined && device[key] !== null && device[key] !== "")
+            {
+                const row = document.createElement("tr");
+                const value = device[key];
 
-            row.innerHTML =
-                "<td class='label'>" +
-                (FriendlyNames[key] || key) +
-                "</td>" +
-                "<td>" +
-                value +
-                "</td>";
+                row.innerHTML =
+                    "<td class='label'>" +
+                    (FriendlyNames[key] || key) +
+                    "</td>" +
+                    "<td>" +
+                    value +
+                    "</td>";
 
-            table.appendChild(row);
+                table.appendChild(row);
+            }
         });
     }
     catch(ex)
