@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Device Information</title>
 
 <style>
 
 body{
-    margin:0;
+    background:#111827;
+    color:white;
+    font-family:Segoe UI, Arial, sans-serif;
     padding:20px;
-    background:#0f172a;
-    color:#ffffff;
-    font-family:'Segoe UI',sans-serif;
 }
 
 .container{
@@ -22,26 +20,9 @@ body{
     margin:auto;
 }
 
-.header{
-    background:#1e293b;
-    border-radius:12px;
-    padding:25px;
-    margin-bottom:20px;
-}
-
-.header h1{
-    margin:0;
-    color:#22c55e;
-}
-
-.subtitle{
-    margin-top:10px;
-    color:#94a3b8;
-}
-
 .card{
-    background:#1e293b;
-    border-radius:12px;
+    background:#1f2937;
+    border-radius:10px;
     padding:20px;
 }
 
@@ -52,77 +33,77 @@ table{
 
 td{
     padding:12px;
-    border-bottom:1px solid #334155;
+    border-bottom:1px solid #374151;
 }
 
 .label{
-    color:#94a3b8;
-    font-weight:600;
-    width:40%;
+    color:#9ca3af;
+    width:35%;
 }
 
-.value{
-    font-weight:500;
-}
-
-.footer{
-    margin-top:20px;
-    text-align:center;
-    color:#64748b;
-    font-size:12px;
+h1{
+    color:#4ade80;
 }
 
 .error{
-    background:#7f1d1d;
-    color:white;
-    padding:15px;
-    border-radius:8px;
-}
-
-@media screen and (max-width: 600px){
-
-    td{
-        display:block;
-        width:100%;
-        padding:8px;
-    }
-
-    .label{
-        border-bottom:none;
-        padding-bottom:0;
-    }
-
-    .value{
-        padding-top:0;
-        margin-bottom:10px;
-    }
+    color:#ef4444;
+    font-weight:bold;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-    <div class="header">
-        <h1 id="ComputerName">Device Information</h1>
-        <div class="subtitle" id="OperatingSystem"></div>
-    </div>
+<div class="card">
 
-    <div class="card">
+<h1 id="title">Device Information</h1>
 
-        <table id="infoTable"></table>
+<div id="error" class="error"></div>
 
-        <div id="error"></div>
-
-    </div>
-
-    <div class="footer">
-        Lewisham & Greenwich NHS Trust Device Information
-    </div>
+<table id="deviceTable"></table>
 
 </div>
 
-<
+</div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const encoded = params.get("d");
+
+if(!encoded)
+{
+    document.getElementById("error").innerText =
+        "No device information supplied.";
+}
+else
+{
+    try
+    {
+        const jsonText = atob(encoded);
+
+        console.log(jsonText);
+
+        const data = JSON.parse(jsonText);
+
+        if(data.ComputerName)
+        {
+            document.getElementById("title").innerText =
+                data.ComputerName;
+        }
+
+        const table = document.getElementById("deviceTable");
+
+        Object.entries(data).forEach(([key,value]) =>
+        {
+            const row = document.createElement("tr");
+
+            row.innerHTML =
+                `<td class="label">${key}</td><td>${value}</td>`;
+
+            table.appendChild(row);
+        });
+    
